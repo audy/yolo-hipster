@@ -19,26 +19,17 @@ from sklearn.preprocessing import LabelEncoder
 def cli():
     pass
 
-@click.command()
-@click.option('--model', help='pickled model built with yoloh train')
-@click.option('--sequences', help='sequences to classify')
-def classify(*args, **kwargs):
-
-    logging.info('loading model')
-    with open(kwargs['model'], 'rb') as handle:
-        model = pickle.load(handle)
-
-    logging.info('reading sequences')
-    sequences = parse_fasta(kwargs['sequences'])
-
 
 @click.command()
-@click.option('--sequences', help='training sequences. hint: use greengenes.')
+@click.option('--training-sequences', help='training sequences. hint: use greengenes.')
+@click.option('--query-sequences', help='query sequences in fasta format')
 @click.option('--taxonomies', help='training taxonomies. hint: use greengenes.')
 @click.option('--output', help='where to save trained model.')
 @click.option('--rank', help='taxonomic rank to train at', default='Species')
 @click.option('--ngram-range', nargs = 2, type=int, default=(4, 4))
-def train(*args, **kwargs):
+def classify(*args, **kwargs):
+
+    print kwargs
 
     # load taxonomies into pandas DataFrame
     # for convenience, we're gonna store sequences and labels in
@@ -48,10 +39,10 @@ def train(*args, **kwargs):
     logging.info('loaded %s taxonomic descriptions' % len(tax_table))
 
     # load sequences
-    logging.info('reading sequences from %s' % kwargs['sequences'])
-    with open(kwargs['sequences']) as handle:
+    logging.info('reading sequences from %s' % kwargs['training_sequences'])
+    with open(kwargs['training_sequences']) as handle:
         seqs = list(parse_fasta(handle))
-    logging.info('loaded %s sequences' % len(seqs))
+    logging.info('loaded %s training sequences' % len(seqs))
 
     # train
     tax_table = tax_table.dropna()
@@ -61,10 +52,14 @@ def train(*args, **kwargs):
     # 2. convert to dictionary id -> sequence
     keep_ids = set(str(i) for i in tax_table.index)
     seqs = { r[0]: r[1] for r in seqs if r[0] in keep_ids }
-    logging.info('kept %s sequences' % len(seqs))
+    logging.info('kept %s training sequences' % len(seqs))
+
+    tax_table = tax_table.ix[seqs.keys()]
 
     # put sequences in tax_table
     tax_table.sequence = [ seqs[i] for i in tax_table.index ]
+
+    logging.info('have %s different labels' % len(set(tax_table['Species'])))
 
     logging.info('classifying at %s rank' % kwargs['rank'])
 
@@ -88,18 +83,20 @@ def train(*args, **kwargs):
 
     pipeline.fit(tax_table.sequence, tax_table.label)
 
-    # pickle
-    # (we might want to store this in some kind of struct that stores
-    # metadata about the database such as kmer size, creation datetime
-    # original sequences, etc...)
-    logging.info('saving model to %s' % kwargs['output'])
-    with open(kwargs['output'], 'wb') as handle:
-        pickle.dump(pipeline.named_steps['classifier'], handle)
+    # iterate over query sequences, predicting probabilites for each
+    # store probabilities in a matrix (DataFrame) with database ID
+    # as the column and sequence ID as the row
 
-    logging.info('done. have a nice day')
+    record_target_proba = {}
+
+    with open(kwargs['query_sequences']) as handle:
+        records = parse_fasta(handle)
+
+        for record in records:
+            print pipeline.predict_proba([record[1]])
 
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, logfile='/dev/stderr')
-    cli.add_command(train)
+    cli.add_command(classify)
     cli()
