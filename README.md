@@ -2,6 +2,8 @@
 
 Naive Bayes taxonomy classifier using scikit-learn
 
+[Hipster Bayes](http://i.imgur.com/A23ztMl.png)
+
 ## Usage
 
 ```
