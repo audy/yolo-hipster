@@ -50,7 +50,8 @@ def train(*args, **kwargs):
 
     # load sequences
     logging.info('reading sequences from %s' % kwargs['sequences'])
-    seqs = list(parse_fasta(kwargs['sequences']))
+    with open(kwargs['sequences']) as handle:
+        seqs = list(parse_fasta(handle))
     logging.info('loaded %s sequences' % len(seqs))
 
     # train
