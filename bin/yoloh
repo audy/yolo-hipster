@@ -99,9 +99,7 @@ def train(*args, **kwargs):
     logging.info('done. have a nice day')
 
 
-
-cli.add_command(train)
-
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, logfile='/dev/stderr')
+    cli.add_command(train)
     cli()
