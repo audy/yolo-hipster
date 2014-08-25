@@ -32,7 +32,6 @@ def classify(*args, **kwargs):
     sequences = parse_fasta(kwargs['sequences'])
 
 
-
 @click.command()
 @click.option('--sequences', help='training sequences. hint: use greengenes.')
 @click.option('--taxonomies', help='training taxonomies. hint: use greengenes.')
@@ -73,7 +72,6 @@ def train(*args, **kwargs):
     label_encoder = LabelEncoder()
     logging.info('transforming labels using %s' % label_encoder)
     tax_table.label = label_encoder.fit_transform(tax_table[kwargs['rank']])
-
 
     # define transformation and classification pipeline
     hasher = HashingVectorizer(analyzer='char',
