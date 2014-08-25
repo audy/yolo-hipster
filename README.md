@@ -21,6 +21,21 @@ Options:
 
 (using GreenGenes 13.5)
 
+I modified the taxonomy table to look like a real CSV file. It looks like this:
+
+```
+"","Domain","Phylum","Class","Order","Family","Genus","Species","OTU"
+"unclassified_reads","","","","","","","","unclassified_reads"
+"367523","Bacteria","Bacteroidetes","Flavobacteriia","Flavobacteriales","Flavobacteriaceae","Flavobacterium","","367523"
+"187144","Bacteria","Firmicutes","Clostridia","Clostridiales","","","","187144"
+"836974","Bacteria","Cyanobacteria","Chloroplast","Cercozoa","","","","836974"
+"310669","Bacteria","Firmicutes","Clostridia","Clostridiales","","","","310669"
+"823916","Bacteria","Proteobacteria","Gammaproteobacteria","Pseudomonadales","Moraxellaceae","Enhydrobacter","","823916"
+"878161","Bacteria","Acidobacteria","Acidobacteriia","Acidobacteriales","Acidobacteriaceae","Terriglobus","","878161"
+"3064251","Bacteria","Verrucomicrobia","Opitutae","Puniceicoccales","Puniceicoccaceae","Puniceicoccus","","3064251"
+"1138555","Bacteria","Firmicutes","Clostridia","Clostridiales","Caldicoprobacteraceae","Caldicoprobacter","","1138555"
+```
+
 ```sh
 bin/yoloh classify \
     --training-sequences test.fasta \
