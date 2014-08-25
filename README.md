@@ -43,8 +43,24 @@ bin/yoloh classify \
     --training-sequences test.fasta \
     --query-sequences test.fasta \
     --taxonomies greengenes-taxonomies.csv \
-    --rank Species
+    --rank Species \
+    --output results.csv
 ```
+
+Results will look like this:
+
+```
+,autotrophica,lovleyi,mexicana
+1111360,0.34330544871451424,0.3342029967950079,0.3224915544904801
+1111372,0.336105138886059,0.3330440720766938,0.3308507890372489
+1111409,0.3324123789067556,0.3353478772901851,0.33223974380307053
+1111415,0.3341535755430514,0.3334952221444319,0.3323512023125195
+1111416,0.33400844665482093,0.33724709216149507,0.3287444611836827
+1111421,0.3367241747506031,0.3334891830574319,0.3297866421919595
+```
+
+- Row IDs are database OTU names (at rank specified with `--rank`).
+- Column IDs are sequences IDs in query FASTA file (from head).
 
 ## Installation
 
